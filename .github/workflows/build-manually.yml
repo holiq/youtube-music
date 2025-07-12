@@ -30,7 +30,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           # Versi Node.js yang akan digunakan. '20.x' akan menggunakan versi LTS terbaru dari v20.
-          node-version: '20.x'
+          node-version: '22.x'
 
       # 3. Aktifkan Corepack untuk menggunakan Yarn
       - name: Enable Corepack
