@@ -43,15 +43,15 @@ jobs:
       # 5. Jalankan perintah build spesifik untuk setiap OS
       - name: Build for Linux
         if: runner.os == 'Linux'
-        run: yarn build:linux
+        run: yarn dist:linux
 
       - name: Build for Windows
         if: runner.os == 'Windows'
-        run: yarn build:win
+        run: yarn dist:win
 
       - name: Build for macOS
         if: runner.os == 'macOS'
-        run: yarn build:mac
+        run: yarn dist:mac
 
       # 6. Unggah hasil build sebagai artifak
       - name: Upload Artifacts
