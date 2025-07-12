@@ -31,7 +31,6 @@ jobs:
         with:
           # Versi Node.js yang akan digunakan. '20.x' akan menggunakan versi LTS terbaru dari v20.
           node-version: '20.x'
-          cache: 'yarn'
 
       # 3. Aktifkan Corepack untuk menggunakan Yarn
       - name: Enable Corepack
