@@ -3,49 +3,41 @@ name: Build Electron App
 
 # Pemicu (trigger) untuk menjalankan alur kerja
 on:
-  # Jalankan saat ada push ke branch 'main'
   push:
     branches: [ "main" ]
-  # Jalankan saat ada pull request yang menargetkan branch 'main'
   pull_request:
     branches: [ "main" ]
-  # Izinkan alur kerja dijalankan secara manual dari UI GitHub
   workflow_dispatch:
 
 # Daftar pekerjaan (jobs) yang akan dijalankan
 jobs:
   build:
-    # Menggunakan strategi matriks untuk menjalankan job di beberapa OS
     strategy:
-      # Jangan batalkan semua job dalam matriks jika salah satu gagal
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
 
-    # Menentukan runner (mesin virtual) berdasarkan matriks OS
     runs-on: ${{ matrix.os }}
 
-    # Langkah-langkah yang akan dieksekusi dalam job
     steps:
       # 1. Checkout kode dari repositori
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. Setup Node.js menggunakan versi dari file .nvmrc
-      #    Sekaligus mengaktifkan cache untuk Yarn agar instalasi lebih cepat
+      # 2. Setup Node.js secara eksplisit ke versi 20.x
+      #    Ini adalah perbaikan untuk error "file .nvmrc does not exist"
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version-file: '.nvmrc'
+          # Versi Node.js yang akan digunakan. '20.x' akan menggunakan versi LTS terbaru dari v20.
+          node-version: '20.x'
           cache: 'yarn'
 
       # 3. Aktifkan Corepack untuk menggunakan Yarn
-      #    Ini adalah cara modern yang direkomendasikan untuk mengelola package manager
       - name: Enable Corepack
         run: corepack enable
 
       # 4. Install semua dependensi proyek menggunakan Yarn
-      #    --frozen-lockfile memastikan versi yang sama persis seperti di file lock digunakan
       - name: Install Dependencies
         run: yarn install --frozen-lockfile
 
@@ -63,14 +55,10 @@ jobs:
         run: yarn build:mac
 
       # 6. Unggah hasil build sebagai artifak
-      #    Ini memungkinkan Anda untuk mengunduh file installer (.exe, .dmg, .deb, dll.)
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          # Nama artifak yang akan diunggah (misal: youtube-music-windows-latest)
           name: youtube-music-${{ matrix.os }}
-          # Path file hasil build yang akan diunggah
-          # electron-builder secara default menyimpan output di folder 'dist'
           path: |
             dist/*.exe
             dist/*.dmg
